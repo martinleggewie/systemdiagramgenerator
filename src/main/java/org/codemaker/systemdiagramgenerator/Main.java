@@ -1,19 +1,20 @@
 package org.codemaker.systemdiagramgenerator;
 
-import org.apache.commons.cli.*;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Options options = new Options();
-        CommandLineParser commandLineParser = new DefaultParser();
-        try {
-            CommandLine commandLine = commandLineParser.parse(options, args);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+  public static void main(String[] args) {
+    Options options = new Options();
+    CommandLineParser commandLineParser = new DefaultParser();
+    try {
+      CommandLine commandLine = commandLineParser.parse(options, args);
+    } catch (ParseException e) {
+      e.printStackTrace();
     }
+  }
 }

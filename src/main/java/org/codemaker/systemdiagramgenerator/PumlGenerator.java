@@ -6,41 +6,35 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Comparator;
 
-public class PumlGenerator {
+class PumlGenerator {
 
-    private DependyMatrix dependyMatrix;
-    private String filename;
+  private Dependies dependies;
 
-    public PumlGenerator(DependyMatrix dependyMatrix, String filename) {
-        this.dependyMatrix = dependyMatrix;
-        this.filename = filename;
+  PumlGenerator(Dependies dependies) {
+    this.dependies = dependies;
+  }
+
+  String generate() throws IOException {
+    StringBuilder builder = new StringBuilder();
+    builder.append(String.format("@startuml %s\n", dependies.getTitle()));
+    builder.append("\n");
+
+    int maxSysNameLength = dependies.getSyses().stream().max(Comparator.comparing(sys -> sys.getName().length())).get().getName().length();
+
+    for (Sys sys : dependies.getSyses()) {
+      String sysName = sys.getName();
+      String pumlCompatibleSysName = sysName.replace("-", "");
+      builder.append(String.format("rectangle %-" + maxSysNameLength + "s as %s\n", pumlCompatibleSysName, "\"" + sysName + "\""));
     }
 
-    String generate() throws IOException {
-//        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-        StringWriter stringWriter = new StringWriter();
-        BufferedWriter writer = new BufferedWriter(stringWriter);
-        writer.write(String.format("@startuml %s\n", new File(filename).getName()));
-        writer.newLine();
-
-        int maxSysNameLength = dependyMatrix.getSyses().stream().max(Comparator.comparing(sys -> sys.getName().length())).get().getName().length();
-
-        for (Sys sys : dependyMatrix.getSyses()) {
-            String sysName = sys.getName();
-            String pumlCompatibleSysName = sysName.replace("-", "");
-            writer.write(String.format("rectangle %-" + maxSysNameLength + "s as %s\n", pumlCompatibleSysName, "\"" + sysName + "\""));
-        }
-
-        writer.newLine();
-        for (Dependy dependy : dependyMatrix.getDependies()) {
-            writer.write(String.format("%" + maxSysNameLength + "s --> %s\n", dependy.getFrom().getName().replace("-", ""), dependy.getTo().getName().replace("-", "")));
-        }
-        writer.newLine();
-        writer.write("@enduml");
-
-        writer.close();
-
-        return stringWriter.getBuffer().toString();
+    builder.append("\n");
+    for (Dependy dependy : dependies.getDependies()) {
+      builder.append(String.format("%" + maxSysNameLength + "s --> %s\n", dependy.getFrom().getName().replace("-", ""), dependy.getTo().getName().replace("-", "")));
     }
+    builder.append("\n");
+    builder.append("@enduml");
+
+    return builder.toString();
+  }
 
 }
