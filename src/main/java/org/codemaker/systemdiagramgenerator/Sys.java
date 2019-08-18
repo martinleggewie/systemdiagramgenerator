@@ -10,10 +10,12 @@ import java.util.Objects;
 class Sys implements Serializable {
   private String name;
   private String type;
+  private MigrationState migrationState;
 
-  public Sys(String name, String type) {
+  Sys(String name, String type, MigrationState migrationState) {
     this.name = name;
     this.type = type;
+    this.migrationState = migrationState;
   }
 
   String getName() {
@@ -24,6 +26,10 @@ class Sys implements Serializable {
     return type;
   }
 
+  public MigrationState getMigrationState() {
+    return migrationState;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -31,16 +37,11 @@ class Sys implements Serializable {
     if (o == null || getClass() != o.getClass())
       return false;
     Sys sys = (Sys) o;
-    return name.equals(sys.name) && type.equals(sys.type);
+    return name.equals(sys.name) && type.equals(sys.type) && migrationState == sys.migrationState;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type);
-  }
-
-  @Override
-  public String toString() {
-    return "Sys{" + "name='" + name + '\'' + ", type='" + type + '\'' + '}';
+    return Objects.hash(name, type, migrationState);
   }
 }

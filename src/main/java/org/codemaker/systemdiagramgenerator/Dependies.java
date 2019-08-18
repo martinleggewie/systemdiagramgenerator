@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 class Dependies {
 
   private String title;
-  private Set<Dependy> dependies = new HashSet<>();
+  private Set<Dependy> dependySet = new HashSet<>();
 
   public Dependies(String title) {
     this.title = title;
@@ -19,14 +19,14 @@ class Dependies {
   }
 
   void addDependy(Dependy dependy) {
-    dependies.add(dependy);
+    dependySet.add(dependy);
   }
 
-  Set<Dependy> getDependies() {
-    return new HashSet<>(dependies);
+  Set<Dependy> getDependySet() {
+    return new HashSet<>(dependySet);
   }
 
-  Set<Sys> getSyses() {
-    return dependies.stream().flatMap(d -> Stream.of(d.getFrom(), d.getTo())).collect(Collectors.toSet());
+  Set<Sys> getSysSet() {
+    return dependySet.stream().flatMap(d -> Stream.of(d.getFrom(), d.getTo())).collect(Collectors.toSet());
   }
 }

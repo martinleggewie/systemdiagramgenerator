@@ -3,7 +3,7 @@ package org.codemaker.systemdiagramgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DependiesSequence {
+class DependiesSequence {
 
   private List<Dependies> dependiesList = new ArrayList<>();
 

@@ -1,9 +1,6 @@
 package org.codemaker.systemdiagramgenerator;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Comparator;
 
 class PumlGenerator {
@@ -19,16 +16,17 @@ class PumlGenerator {
     builder.append(String.format("@startuml %s\n", dependies.getTitle()));
     builder.append("\n");
 
-    int maxSysNameLength = dependies.getSyses().stream().max(Comparator.comparing(sys -> sys.getName().length())).get().getName().length();
+    int maxSysNameLength =
+            dependies.getSysSet().stream().max(Comparator.comparing(sys -> sys.getName().length())).get().getName().length();
 
-    for (Sys sys : dependies.getSyses()) {
+    for (Sys sys : dependies.getSysSet()) {
       String sysName = sys.getName();
       String pumlCompatibleSysName = sysName.replace("-", "");
       builder.append(String.format("rectangle %-" + maxSysNameLength + "s as %s\n", pumlCompatibleSysName, "\"" + sysName + "\""));
     }
 
     builder.append("\n");
-    for (Dependy dependy : dependies.getDependies()) {
+    for (Dependy dependy : dependies.getDependySet()) {
       builder.append(String.format("%" + maxSysNameLength + "s --> %s\n", dependy.getFrom().getName().replace("-", ""), dependy.getTo().getName().replace("-", "")));
     }
     builder.append("\n");

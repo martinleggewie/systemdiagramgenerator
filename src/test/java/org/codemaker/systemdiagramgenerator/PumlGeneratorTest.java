@@ -2,10 +2,12 @@ package org.codemaker.systemdiagramgenerator;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 class PumlGeneratorTest {
@@ -13,8 +15,9 @@ class PumlGeneratorTest {
   @Test
   void testGenerate() throws IOException, URISyntaxException {
     // 1. Arrange
-    String inputFilename = "systems-and-dependencies.xlsx";
-    DependiesSequenceReader dependiesSequenceReader = new DependiesSequenceReader(inputFilename);
+    URL url = getClass().getClassLoader().getResource("test-dependency-matrices.xlsx");
+    Path path = Paths.get(url.toURI());
+    DependiesSequenceReader dependiesSequenceReader = new DependiesSequenceReader(new FileInputStream(path.toFile()));
     DependiesSequence dependiesSequence = dependiesSequenceReader.read();
 
     // 2. Act

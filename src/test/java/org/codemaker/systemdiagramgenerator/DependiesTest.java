@@ -22,7 +22,7 @@ class DependiesTest {
     deppendies.addDependy(dependy3);
 
     // 2. Act
-    Set<Dependy> dependies = deppendies.getDependies();
+    Set<Dependy> dependies = deppendies.getDependySet();
 
     // 3. Assert
     assertNotNull(dependies);
@@ -34,21 +34,21 @@ class DependiesTest {
   @Test
   void testGetSyses() {
     // 1. Arrange
-    Sys sys1 = new Sys("sys1", "thing");
-    Sys sys2 = new Sys("sys2", "thing");
-    Sys sys3 = new Sys("sys3", "thing");
-    Sys sys4 = new Sys("sys4", "thing");
-    Sys sys5 = new Sys("sys5", "thing");
+    Sys sys1 = new Sys("sys1", "thing", MigrationState.STAYING);
+    Sys sys2 = new Sys("sys2", "thing", MigrationState.STAYING);
+    Sys sys3 = new Sys("sys3", "thing", MigrationState.STAYING);
+    Sys sys4 = new Sys("sys4", "thing", MigrationState.STAYING);
+    Sys sys5 = new Sys("sys5", "thing", MigrationState.STAYING);
     Dependies dependies = new Dependies("(unknown)");
-    Dependy dependy1 = new Dependy(sys1, sys1, Dependy.Type.STAYING);
-    Dependy dependy2 = new Dependy(sys1, sys2, Dependy.Type.STAYING);
-    Dependy dependy3 = new Dependy(sys1, sys2, Dependy.Type.STAYING);
-    Dependy dependy4 = new Dependy(sys1, sys3, Dependy.Type.STAYING);
-    Dependy dependy5 = new Dependy(sys1, sys4, Dependy.Type.STAYING);
-    Dependy dependy6 = new Dependy(sys2, sys3, Dependy.Type.STAYING);
-    Dependy dependy7 = new Dependy(sys2, sys4, Dependy.Type.STAYING);
-    Dependy dependy8 = new Dependy(sys3, sys4, Dependy.Type.STAYING);
-    Dependy dependy9 = new Dependy(sys4, sys5, Dependy.Type.STAYING);
+    Dependy dependy1 = new Dependy(sys1, sys1, MigrationState.STAYING);
+    Dependy dependy2 = new Dependy(sys1, sys2, MigrationState.STAYING);
+    Dependy dependy3 = new Dependy(sys1, sys2, MigrationState.STAYING);
+    Dependy dependy4 = new Dependy(sys1, sys3, MigrationState.STAYING);
+    Dependy dependy5 = new Dependy(sys1, sys4, MigrationState.STAYING);
+    Dependy dependy6 = new Dependy(sys2, sys3, MigrationState.STAYING);
+    Dependy dependy7 = new Dependy(sys2, sys4, MigrationState.STAYING);
+    Dependy dependy8 = new Dependy(sys3, sys4, MigrationState.STAYING);
+    Dependy dependy9 = new Dependy(sys4, sys5, MigrationState.STAYING);
     dependies.addDependy(dependy1);
     dependies.addDependy(dependy2);
     dependies.addDependy(dependy3);
@@ -60,7 +60,7 @@ class DependiesTest {
     dependies.addDependy(dependy9);
 
     // 2. Act
-    Set<Sys> syses = dependies.getSyses();
+    Set<Sys> syses = dependies.getSysSet();
 
     // 3. Assert
     assertEquals(5, syses.size());
@@ -72,6 +72,7 @@ class DependiesTest {
   }
 
   private Dependy createDependy(String sys1Name, String sys2Name) {
-    return new Dependy(new Sys(sys1Name, "thing"), new Sys(sys2Name, "thing"), Dependy.Type.STAYING);
+    return new Dependy(new Sys(sys1Name, "thing", MigrationState.STAYING), new Sys(sys2Name, "thing",
+            MigrationState.STAYING), MigrationState.STAYING);
   }
 }

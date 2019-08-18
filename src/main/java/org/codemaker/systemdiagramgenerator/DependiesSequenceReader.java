@@ -6,12 +6,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,32 +19,32 @@ import java.util.Map;
 class DependiesSequenceReader {
 
   private String filePath;
+  private InputStream inputStream;
 
-  DependiesSequenceReader(String filePath) {
-    this.filePath = filePath;
+  DependiesSequenceReader(InputStream inputStream) {
+    this.inputStream = inputStream;
   }
 
   DependiesSequence read() throws IOException, URISyntaxException {
     DependiesSequence result = new DependiesSequence();
 
-    Workbook workbook = readWorkbook();
+    Workbook workbook = new XSSFWorkbook(inputStream);
 
     Map<String, Sys> sysMap = createSysMapFromWorkbook(workbook);
     List<Dependies> dependiesList = createDependiesFromWorkbook(workbook, sysMap);
 
-    dependiesList.forEach(result::addDependies);
+    for (int i = 0; i < dependiesList.size(); i++) {
+      Dependies currentDependies = dependiesList.get(i);
+      result.addDependies(currentDependies);
+      if (i < dependiesList.size() - 1) {
+        Dependies nextDependies = dependiesList.get(i + 1);
+        Dependies intermediateDependies =
+                new IntermediateDependiesCalculator(currentDependies, nextDependies).calculate();
+        result.addDependies(intermediateDependies);
+      }
+    }
 
     return result;
-  }
-
-  private Workbook readWorkbook() throws URISyntaxException, IOException {
-    URL url = getClass().getClassLoader().getResource(filePath);
-    if (url != null) {
-      Path path = Paths.get(url.toURI());
-      return new XSSFWorkbook(new FileInputStream(path.toFile()));
-    } else {
-      return null;
-    }
   }
 
   private List<Sys> collectFromSyses(Sheet sheet) {
@@ -57,7 +54,7 @@ class DependiesSequenceReader {
     while (rowIterator.hasNext()) {
       Row row = rowIterator.next();
       Cell cell = row.getCell(0);
-      result.add(new Sys(cell.getStringCellValue(), "Application"));
+      result.add(new Sys(cell.getStringCellValue(), "Application", MigrationState.STAYING));
     }
     return result;
   }
@@ -70,7 +67,7 @@ class DependiesSequenceReader {
     cellIterator.next();
     while (cellIterator.hasNext()) {
       Cell cell = cellIterator.next();
-      result.add(new Sys(cell.getStringCellValue(), "Application"));
+      result.add(new Sys(cell.getStringCellValue(), "Application", MigrationState.STAYING));
     }
     return result;
   }
@@ -95,7 +92,7 @@ class DependiesSequenceReader {
       Row row = rowIterator.next();
       String sysName = row.getCell(0).getStringCellValue();
       String sysType = row.getCell(1).getStringCellValue();
-      result.put(sysName, new Sys(sysName, sysType));
+      result.put(sysName, new Sys(sysName, sysType, MigrationState.STAYING));
 
     }
 
@@ -140,7 +137,7 @@ class DependiesSequenceReader {
         Cell cell = row.getCell(toSysesIndex);
         String cellValue = cell.getStringCellValue();
         if (cellValue.equals("y")) {
-          Dependy dependy = new Dependy(fromSys, toSys, Dependy.Type.STAYING);
+          Dependy dependy = new Dependy(fromSys, toSys, MigrationState.STAYING);
           result.addDependy(dependy);
         }
         toSysesIndex++;
